@@ -1,0 +1,69 @@
+<@extends src="base.ftl">
+<@block name="content">
+<link rel="stylesheet" href="${skinPath}/css/intranets.css" type="text/css" media="screen" charset="utf-8">
+
+<#include "includes/menu.ftl">
+
+<#function get_path doc>
+    <#assign rootPath = Context.getProperty("sectionPath")>
+    <#assign rootPath = rootPath?substring(0, rootPath?length - 1)>
+    <#if doc.path != rootPath>
+	<#local section_path = doc.path>
+	<#local section_path = section_path?substring(rootPath?length, section_path?length)>
+	<#return get_path(doc.parent) + "> <a href='" + Context.baseURL + Context.modulePath + "/repository" + section_path + "'>" + doc.title + "</a> ">
+    <#else>
+	<#return "> <a href='" + Context.baseURL + Context.modulePath + "/repository'>" + doc.title + "</a> ">
+    </#if>
+</#function>
+
+<#function get_date doc modified_date>
+    <#list doc.children as child>
+	<#if modified_date < child.dublincore.modified>
+	    <#local modified_date = child.dublincore.modified>
+	</#if>
+	<#if doc.isFolder>
+	    <#local modified_date = get_date(child, modified_date)>
+	</#if>
+    </#list>
+    <#return modified_date>
+</#function>
+
+<div class="fil_ariane">${get_path(Document)}</div>
+<#assign flag_row = true>
+<table class="dataOutput">
+    <thead>
+	<tr>
+	    <th></th>
+	    <th>Titre</th>
+	    <th>Derni&egrave;re modification</th>
+	    <th>Auteur</th>
+	</tr>
+    </thead>
+    <#list Document.children as child>
+    <#assign file = child["file:content"]>
+    <#if flag_row>
+	<#assign flag_row = false>
+    <tr class="dataRowEven">
+    <#else>
+	<#assign flag_row = true>
+    <tr class="dataRowOdd">
+    </#if>
+	<td class="iconColumn"><img src="${Context.baseURL}/${contextPath}${child["common:icon"]}"></td>
+	<#if child.isFolder>
+	    <td><a href="${Context.URL}/${child.name}">${child.title}</a></td>
+	<#else>
+	    <#assign section_path = child.path>
+	    <#assign section_path = section_path?substring(Context.getProperty("sectionPath")?length, section_path?length)>
+	    <td><a href="${Context.baseURL}${Context.modulePath}/file/${section_path}">${file.filename}</a>
+		<#if file.length &gt;999>(${file.length} Ko)</#if>
+		<#if file.length &lt;999>(${file.length} B)</#if>
+	    </td>
+	</#if>
+	<td>${get_date(child, child.dublincore.modified)}</td>
+	<td>${child.dublincore.creator}</td>
+    </tr>
+    </#list>
+</table>
+
+</@block>
+</@extends>

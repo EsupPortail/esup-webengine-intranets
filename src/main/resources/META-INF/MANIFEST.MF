@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 1
+Bundle-Name: esup-webengine-intranets project
+Bundle-SymbolicName: org.esupportail.ecm.intranets;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: Nuxeo
+Provide-Package: org.esupportail.ecm.intranets
+Require-Bundle: org.nuxeo.ecm.webengine.core

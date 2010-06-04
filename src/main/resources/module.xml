@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+
+<module name="esupintranets" root-type="esupintranets" path="/esupintranets" extends="base">
+</module>
