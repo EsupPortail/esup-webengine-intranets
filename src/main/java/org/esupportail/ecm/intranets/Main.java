@@ -1,15 +1,10 @@
 package org.esupportail.ecm.intranets;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -17,8 +12,6 @@ import java.util.Properties;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
@@ -37,8 +30,6 @@ import org.nuxeo.ecm.webengine.WebException;
 import org.nuxeo.ecm.webengine.model.*;
 import org.nuxeo.ecm.webengine.model.exceptions.*;
 import org.nuxeo.ecm.webengine.model.impl.*;
-import org.nuxeo.runtime.api.Framework;
-import org.nuxeo.ecm.platform.mimetype.interfaces.MimetypeRegistry;
 
 
 
@@ -91,11 +82,9 @@ public class Main extends ModuleRoot {
 	public Object getFile(@PathParam("path") String path) 
 		throws PropertyException, ClientException {
 		
-	    String errorMessage = "";
 	    Object requestedObject;
 	    Property propertyFile = null;
 	    String requestedFilename = "";
-	    String versionUid = path;
 	    Blob requestedBlob = null;
 	    path = sectionPath + path;
 	    CoreSession session = ctx.getCoreSession();
