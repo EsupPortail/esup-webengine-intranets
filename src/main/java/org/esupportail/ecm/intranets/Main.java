@@ -252,6 +252,28 @@ public class Main extends ModuleRoot {
     	    }
     	    
 	}
+	
+	
+	
+	/**
+     *      get latests documents
+     */
+    @GET
+    @Path("news")
+    public Object getNews() {
+
+        ctx.setProperty("sectionPath", sectionPath);
+        String query = "SELECT * FROM Document WHERE (ecm:path STARTSWITH \"" + sectionPath + "\")"
+             + " AND (ecm:primaryType = 'File') ORDER BY dc:modified DESC ";
+
+        try {
+            DocumentModelList docs = ctx.getCoreSession().query(query, 10);
+            return getView("search").arg("query", query).arg("result", docs);
+        } catch (ClientException e) {
+            throw WebException.wrap(e);
+        }
+
+    }
 
 }
 
