@@ -32,5 +32,7 @@
     </#list>
 </table>
 
+<div class="icon_rss"><a href="${Context.baseURL}${Context.modulePath}/rss"><img src="${Context.baseURL}${skinPath}/image/icon_rss.png"></a></div>
+
 </@block>
 </@extends>
