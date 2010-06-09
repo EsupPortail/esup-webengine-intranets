@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -22,7 +21,6 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
-import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.ecm.core.api.model.PropertyException;
 import org.nuxeo.ecm.core.api.PathRef;
@@ -92,7 +90,7 @@ public class Main extends ModuleRoot {
 	    CoreSession session = ctx.getCoreSession();
 	    DocumentRef docRef = new PathRef(path);
 	    DocumentModel doc = null;
-	    DocumentModel versionDoc = null;
+	    //DocumentModel versionDoc = null;
 	    
 	    ctx.setProperty("sectionPath", sectionPath);
 	    
@@ -107,6 +105,7 @@ public class Main extends ModuleRoot {
             doc = proxies.get(0);
 	    else
 	    	doc = session.getDocument(docRef);
+	    
 	    
 	    propertyFile = doc.getProperty("file:content");
 	    
@@ -268,7 +267,30 @@ public class Main extends ModuleRoot {
 
         try {
             DocumentModelList docs = ctx.getCoreSession().query(query, 10);
-            return getView("search").arg("query", query).arg("result", docs);
+            return getView("news").arg("query", query).arg("result", docs);
+        } catch (ClientException e) {
+            throw WebException.wrap(e);
+        }
+
+    }
+    
+    
+    
+
+    /**
+     *      rss feed
+     */
+    @GET
+    @Path("rss")
+    public Object getRSS() {
+
+        ctx.setProperty("sectionPath", sectionPath);
+        String query = "SELECT * FROM Document WHERE (ecm:path STARTSWITH \"" + sectionPath + "\")"
+             + " AND (ecm:primaryType = 'File') ORDER BY dc:modified DESC ";
+
+        try {
+            DocumentModelList docs = ctx.getCoreSession().query(query, 10);
+            return getView("rss").arg("query", query).arg("result", docs);
         } catch (ClientException e) {
             throw WebException.wrap(e);
         }
