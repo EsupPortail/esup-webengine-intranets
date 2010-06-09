@@ -177,3 +177,22 @@ table.dataOutput th a img {
 .dataRowOdd {
     background: #ecf6ff;
 }
+
+
+
+
+
+/**********************************************************************
+
+    rss
+
+***********************************************************************/
+
+.icon_rss {
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.icon_rss img {
+    border: 0px;
+}
