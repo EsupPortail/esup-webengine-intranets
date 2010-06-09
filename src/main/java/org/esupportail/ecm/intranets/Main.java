@@ -44,7 +44,7 @@ public class Main extends ModuleRoot {
     	    Map<Object, Object> intranetsProperties = new HashMap<Object, Object>();
     	    Properties p = new Properties();
             URL url = Main.class.getClassLoader().getResource(
-	            "OSGI-INF/intranets.properties");
+	            "OSGI-INF/esup-intranets.properties");
     	    InputStream in = null;
             try {
 	        in = url.openStream();
