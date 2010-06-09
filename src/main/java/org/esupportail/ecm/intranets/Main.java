@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,6 +22,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.NuxeoPrincipal;
+import org.nuxeo.ecm.core.api.VersionModel;
 import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.ecm.core.api.model.PropertyException;
 import org.nuxeo.ecm.core.api.PathRef;
@@ -90,13 +92,22 @@ public class Main extends ModuleRoot {
 	    CoreSession session = ctx.getCoreSession();
 	    DocumentRef docRef = new PathRef(path);
 	    DocumentModel doc = null;
+	    DocumentModel versionDoc = null;
 	    
 	    ctx.setProperty("sectionPath", sectionPath);
 	    
 	    log.error("getFile");
 	    log.error("path :: " + path);
 	    
-	    doc = session.getDocument(docRef);
+	    //doc = session.getDocument(docRef);
+	    //propertyFile = doc.getProperty("file:content");
+	    
+	    DocumentModelList proxies = session.getProxies(docRef, null);
+	    if (proxies.size() > 0)
+            doc = proxies.get(0);
+	    else
+	    	doc = session.getDocument(docRef);
+	    
 	    propertyFile = doc.getProperty("file:content");
 	    
 	    if (propertyFile != null) {
