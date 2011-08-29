@@ -77,7 +77,6 @@ public class Main extends ModuleRoot {
 	@Path("file/{path:.*}")
 	public Object getFile(@PathParam("path") String path) 
 			throws PropertyException, ClientException {
-
 		Object requestedObject;
 		Property propertyFile = null;
 		String requestedFilename = "";

@@ -1,21 +1,21 @@
 <?xml version="1.0"?>
-<project name="${artifactId}" default="deploy" basedir=".">
+<project name="esup-webengine-intranets" default="deploy" basedir=".">
 
   <!-- From the pom.xml -->
-  <property name="name" value="${artifactId}" />
+  <property name="name" value="esup-webengine-intranets" />
   <property name="version" value="${version}" />
 
   <!-- Create a build.properties file from build.properties.sample
        if you wish to override the JBoss paths -->
   <property file="build.properties" />
-  <property name="jboss.dir" value="/nuxeo/nuxeo-dm-5.3.1-jboss" />
+  <property name="nuxeo.dir" value="/opt/nuxeo" />
 
   <property name="javac.debug" value="true" />
   <property name="javac.deprecation" value="false" />
 
   <!-- Boilerplate configuration -->
   <property name="build.dir" value="${basedir}/target" />
-  <property name="deploy.dir" value="${jboss.dir}/server/default/deploy" />
+  <property name="deploy.dir" value="${nuxeo.dir}/nxserver/plugins" />
   <property name="nuxeo.ear" value="nuxeo.ear" />
   <property name="mvn.opts" value="" />
 
@@ -44,12 +44,13 @@
     </exec>
   </target>
 
-  <target name="copy" description="Copy files to JBoss">
+  <target name="copy" description="Copy files to Nuxeo">
     <delete>
       <!-- delete old versions of the project -->
-      <fileset file="${deploy.dir}/${nuxeo.ear}/plugins/${name}-*.jar" />
+      <fileset file="${deploy.dir}/${name}-*.jar" />
     </delete>
-    <copy todir="${deploy.dir}/${nuxeo.ear}/plugins/" overwrite="true">
+  	<echo message="copy vers ${deploy.dir} de ${name}-*.jar"/>
+    <copy todir="${deploy.dir}" overwrite="true">
       <fileset dir="${build.dir}" casesensitive="yes">
         <include name="${name}-*.jar" />
         <exclude name="${name}-*-sources.jar" />
@@ -74,14 +75,15 @@
     </exec>
   </target>
 
-  <target name="web" description="Copy web files to a live JBoss">
+<!-- TODO	
+  <target name="web" description="Copy web files to a live Nuxeo">
     <copy todir="${deploy.dir}/${nuxeo.ear}/nuxeo.war" overwrite="true">
       <fileset dir="${basedir}/src/main/resources/nuxeo.war/" />
     </copy>
   </target>
 	
   <target name="dev" depends="install" description="Hot Deployment">
-	<copy todir="${jboss.dir}/server/default/data/NXRuntime/web/root.war/modules/org.esupportail.se" overwrite="true" verbose="true">
+	<copy todir="${nuxeo.dir}/server/default/data/NXRuntime/web/root.war/modules/org.esupportail.se" overwrite="true" verbose="true">
 		<fileset dir="${build.dir}/classes" casesensitive="yes">
 	        <include name="**/*" />
 	    </fileset>
@@ -90,5 +92,6 @@
   	<echo message="* Don't forget to click on reload in http://localhost:8080/nuxeo/site/admin/engine *"/>
   	<echo message="************************************************************************************"/>
   </target>
+-->
 
 </project>

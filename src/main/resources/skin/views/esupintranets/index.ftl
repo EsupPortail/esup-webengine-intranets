@@ -1,12 +1,12 @@
 <@extends src="base.ftl">
-  <@block name="title">Index</@block>
+  <@block name="title">Intranets</@block>
   <@block name="header">
     Beginning with Webengine !
   </@block>
   <@block name="content">
     This is the <i>index</i> of your module.
     <div>
-      <a href="${This.path}/repository">Acc&egrave;der aux Intranets de l'UVHC</a>
+      <a href="${This.path}/repository">Acc&egrave;der aux Intranets</a>
     </div>
 
   </@block>
