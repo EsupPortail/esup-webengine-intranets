@@ -14,6 +14,7 @@ import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -26,10 +27,13 @@ import org.nuxeo.ecm.core.api.model.PropertyException;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.rest.DocumentRoot;
 import org.nuxeo.ecm.platform.ui.web.auth.NXAuthConstants;
+import org.nuxeo.ecm.platform.ui.web.auth.NuxeoAuthenticationFilter;
+import org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService;
 import org.nuxeo.ecm.webengine.WebException;
 import org.nuxeo.ecm.webengine.model.*;
 import org.nuxeo.ecm.webengine.model.exceptions.*;
 import org.nuxeo.ecm.webengine.model.impl.*;
+import org.nuxeo.runtime.api.Framework;
 
 @WebObject(type = "esupintranets")
 @Produces("text/html; charset=UTF-8")
@@ -132,30 +136,34 @@ public class Main extends ModuleRoot {
 	@Override
 	public Object handleError(WebApplicationException e) {
 		if (e instanceof WebSecurityException) {
-			//forge a cookie in order to come back after authenticate
 			CoreSession coreSession = ctx.getCoreSession();
 			NuxeoPrincipal user = (NuxeoPrincipal) coreSession.getPrincipal();
 			if (user.isAnonymous()) {
-				//inherited redirect method is not used here because it does not manage cookies 
-				String localName = ctx.getRequest().getLocalName();
-				StringBuffer domain = new StringBuffer();
-				String[] localName_element = localName.split("\\.");
-				//start form i=1 to suppress first localName_element
-				for (int i = 1; i < localName_element.length; i++) {
-					domain.append(".").append(localName_element[i]);
+				Map<String, String> urlParameters = new HashMap<String, String>();
+				urlParameters.put(NXAuthConstants.SECURITY_ERROR, "true");
+				urlParameters.put(NXAuthConstants.FORCE_ANONYMOUS_LOGIN, "true");
+				if (ctx.getRequest().getAttribute(NXAuthConstants.REQUESTED_URL) != null) {
+					urlParameters.put(NXAuthConstants.REQUESTED_URL,(String) ctx.getRequest().getAttribute(NXAuthConstants.REQUESTED_URL));
 				}
-				String requestPage = this.getPath().replaceFirst("/nuxeo/", "") + this.getTrailingPath();
-				NewCookie cookieUrlToReach = new NewCookie(NXAuthConstants.SSO_INITIAL_URL_REQUEST_KEY, requestPage, "/", 
-						domain.toString(), 1, NXAuthConstants.SSO_INITIAL_URL_REQUEST_KEY, 60, false);
-				ResponseBuilder responseBuilder;
-				String url = ctx.getServerURL().append("/nuxeo/logout").toString();
+				else {
+					urlParameters.put(NXAuthConstants.REQUESTED_URL, NuxeoAuthenticationFilter.getRequestedUrl(ctx.getRequest()));
+				}
+				String baseURL = "";
 				try {
-					responseBuilder = Response.seeOther(new URI(url));
+					baseURL = initAuthenticationService().getBaseURL(ctx.getRequest())+ NXAuthConstants.LOGOUT_PAGE;
+				} 
+				catch (ClientException a) {
+					throw WebException.wrap(a);					
+				}
+				ctx.getRequest().setAttribute(NXAuthConstants.DISABLE_REDIRECT_REQUEST_KEY, true);
+				baseURL = URIUtils.addParametersToURIQuery(baseURL, urlParameters);
+				log.debug("baseURL = " + baseURL);
+				ResponseBuilder responseBuilder;
+				try {
+					responseBuilder = Response.seeOther(new URI(baseURL));
 				} catch (URISyntaxException e2) {
 					throw WebException.wrap(e2);
 				}
-				responseBuilder.cookie(cookieUrlToReach);
-				responseBuilder.type("text/html");
 				Response requestedObject = responseBuilder.build();
 				return requestedObject;
 			}
@@ -251,6 +259,15 @@ public class Main extends ModuleRoot {
 		} catch (ClientException e) {
 			throw WebException.wrap(e);
 		}
+	}
+
+	protected PluggableAuthenticationService initAuthenticationService() throws ClientException {
+		PluggableAuthenticationService service = (PluggableAuthenticationService) Framework.getRuntime().getComponent(PluggableAuthenticationService.NAME);
+		if (service == null) {
+			log.error("Unable to get Service " + PluggableAuthenticationService.NAME);
+			throw new ClientException("Can't initialize Nuxeo Pluggable Authentication Service");
+		}
+		return service;
 	}
 }
 
