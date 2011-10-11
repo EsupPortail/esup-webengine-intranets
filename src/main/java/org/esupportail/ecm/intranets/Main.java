@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -102,7 +103,14 @@ public class Main extends ModuleRoot {
 		else {
 			doc = session.getDocument(docRef);			
 		}
-		propertyFile = doc.getProperty("file:content");
+		if (doc.getType().equals("Picture")) {
+			List<Property> list = (List<Property>) doc.getProperty("picture:views");
+			Property property = list.get(0);
+			propertyFile = property.get("content");
+		}
+		else {
+			propertyFile = doc.getProperty("file:content");			
+		}
 		if (propertyFile != null) {
 			requestedBlob = (Blob) propertyFile.getValue();
 			if (requestedBlob == null) {

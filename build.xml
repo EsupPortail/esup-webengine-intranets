@@ -5,8 +5,6 @@
   <property name="name" value="esup-webengine-intranets" />
   <property name="version" value="${version}" />
 
-  <!-- Create a build.properties file from build.properties.sample
-       if you wish to override the JBoss paths -->
   <property file="build.properties" />
   <property name="nuxeo.dir" value="/opt/nuxeo" />
 
@@ -26,7 +24,7 @@
     <os family="windows" />
   </condition>
 
-  <target name="deploy" depends="install,copy" description="Build and copy to JBoss" />
+  <target name="deploy" depends="install,copy" description="Build and copy to Tomcat" />
 
   <target name="install" depends="install-unix,install-windows" description="Build" />
   <target name="install-unix" if="osfamily-unix">

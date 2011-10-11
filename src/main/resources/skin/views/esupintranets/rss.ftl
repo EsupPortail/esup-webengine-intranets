@@ -4,7 +4,7 @@
     <channel>
             <title>Intranets</title>
             <link>${Context.baseURL}${Context.modulePath}/rss</link>
-            <description>Liste des documents récemment modifiés dans les intranets</description>
+            <description>Liste des documents rÃ©cemment modifiÃ©s dans les intranets</description>
 
             <#list result as child>
                 <item>
