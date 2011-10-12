@@ -19,12 +19,13 @@
         <tr class="dataRowEven">
             <td class="iconColumn"><img src="${Context.baseURL}/${contextPath}${child["common:icon"]}"></td>
             <#if child.isFolder>
-            <td><a href="${Context.baseURL}${Context.modulePath}/repository/${section_path}">${child.title}</a></td>
+            	<td><a href="${Context.baseURL}${Context.modulePath}/repository/${index}/${section_path}">${child.title}</a></td>
             <#else>
-            <td><a href="${Context.baseURL}${Context.modulePath}/file/${section_path}">${file.filename}</a>
-                <#if file.length &gt;999>(${(file.length / 1024)?int} Ko)</#if>
-                <#if file.length &lt;999>(${file.length} B)</#if>
-            </td>
+	            <td>
+	            	<a href="${Context.baseURL}${Context.modulePath}/file/${index}/${section_path}">${file.filename}</a>
+	                <#if file.length &gt;999>(${(file.length / 1024)?int} Ko)</#if>
+	                <#if file.length &lt;999>(${file.length} B)</#if>
+	            </td>
             </#if>
             <td>${child.dublincore.modified}</td>
             <td>${child.dublincore.creator}</td>
@@ -32,7 +33,7 @@
     </#list>
 </table>
 
-<div class="icon_rss"><a href="${Context.baseURL}${Context.modulePath}/rss"><img src="${Context.baseURL}${skinPath}/image/icon_rss.png"></a></div>
+<div class="icon_rss"><a href="${Context.baseURL}${Context.modulePath}/rss/${index}"><img src="${Context.baseURL}${skinPath}/image/icon_rss.png"></a></div>
 
 </@block>
 </@extends>

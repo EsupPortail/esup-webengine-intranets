@@ -63,15 +63,18 @@ public class Main extends ModuleRoot {
 				}
 			}
 		}
-		sectionPath = (String) intranetsProperties.get("section.path");
+		String sections = (String) intranetsProperties.get("section.path");
+		sectionPaths = sections.split(":");
 	}	
 
 	/**
 	 *	Get repository
 	 */
-	@Path("repository")
-	public Object getRepository() {
+	@Path("repository/{index}/")
+	public Object getRepository(@PathParam("index") int index) {
+		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
+		ctx.setProperty("index", index);
 		return new DocumentRoot(ctx, sectionPath);
 	}
 
@@ -79,13 +82,14 @@ public class Main extends ModuleRoot {
 	 *	Get file
 	 */
 	@GET
-	@Path("file/{path:.*}")
-	public Object getFile(@PathParam("path") String path) 
+	@Path("file/{index}/{path:.*}")
+	public Object getFile(@PathParam("index") int index, @PathParam("path") String path) 
 			throws PropertyException, ClientException {
 		Object requestedObject;
 		Property propertyFile = null;
 		String requestedFilename = "";
 		Blob requestedBlob = null;
+		String sectionPath = sectionPaths[index];
 		path = sectionPath + path;
 		CoreSession session = ctx.getCoreSession();
 		DocumentRef docRef = new PathRef(path);
@@ -191,8 +195,9 @@ public class Main extends ModuleRoot {
 	 * search form
 	 */
 	@GET
-	@Path("form")
-	public Object getViewForm() {
+	@Path("form/{index}/")
+	public Object getViewForm(@PathParam("index") int index) {
+		ctx.setProperty("index", index);
 		return getView("form");
 	}
 
@@ -200,9 +205,11 @@ public class Main extends ModuleRoot {
 	 *	Get tree view
 	 */
 	@GET
-	@Path("tree")
-	public Object getViewTree() {
+	@Path("tree/{index}/")
+	public Object getViewTree(@PathParam("index") int index) {
+		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
+		ctx.setProperty("index", index);
 		return getView("tree").arg("doc", new DocumentRoot(ctx, sectionPath));
 	}
 
@@ -212,7 +219,10 @@ public class Main extends ModuleRoot {
 	@GET
 	@Path("@search")
 	public Object search() {
+		int index = Integer.parseInt(ctx.getRequest().getParameter("index"));
+		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
+		ctx.setProperty("index", index);
 		String query = ctx.getRequest().getParameter("query");
 		if (query == null) {
 			String fullText = ctx.getRequest().getParameter("fullText");
@@ -224,6 +234,9 @@ public class Main extends ModuleRoot {
 			if (orderBy != null) {
 				orderClause = " ORDER BY " + orderBy;
 			}
+//			query = "SELECT * FROM Document WHERE (ecm:fulltext = \"" + fullText
+//					+ "\") OR (ecm:name LIKE \"%" + fullText 
+//					+ "%\") AND (ecm:isCheckedInVersion = 0) AND (ecm:path STARTSWITH \"" + sectionPath + "\")" + orderClause;
 			query = "SELECT * FROM Document WHERE (ecm:fulltext = \"" + fullText
 					+ "\") AND (ecm:isCheckedInVersion = 0) AND (ecm:path STARTSWITH \"" + sectionPath + "\")" + orderClause;
 		}
@@ -239,9 +252,11 @@ public class Main extends ModuleRoot {
 	 *      get latests documents
 	 */
 	@GET
-	@Path("news")
-	public Object getNews() {
+	@Path("news/{index}/")
+	public Object getNews(@PathParam("index") int index) {
+		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
+		ctx.setProperty("index", index);
 		String query = "SELECT * FROM Document WHERE (ecm:path STARTSWITH \"" + sectionPath + "\")"
 				+ " AND (ecm:primaryType = 'File') ORDER BY dc:modified DESC ";
 		try {
@@ -256,9 +271,11 @@ public class Main extends ModuleRoot {
 	 *      rss feed
 	 */
 	@GET
-	@Path("rss")
-	public Object getRSS() {
+	@Path("rss/{index}/")
+	public Object getRSS(@PathParam("index") int index) {
+		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
+		ctx.setProperty("index", index);
 		String query = "SELECT * FROM Document WHERE (ecm:path STARTSWITH \"" + sectionPath + "\")"
 				+ " AND (ecm:primaryType = 'File') ORDER BY dc:modified DESC ";
 		try {

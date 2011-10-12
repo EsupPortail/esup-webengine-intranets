@@ -3,16 +3,15 @@
 <link rel="stylesheet" href="${skinPath}/css/intranets.css" type="text/css" media="screen" charset="utf-8">
 
 <#include "includes/menu.ftl">
-
 <#function get_path doc>
     <#assign rootPath = Context.getProperty("sectionPath")>
     <#assign rootPath = rootPath?substring(0, rootPath?length - 1)>
     <#if doc.path != rootPath>
-	<#local section_path = doc.path>
-	<#local section_path = section_path?substring(rootPath?length, section_path?length)>
-	<#return get_path(doc.parent) + "> <a href='" + Context.baseURL + Context.modulePath + "/repository" + section_path + "'>" + doc.title + "</a> ">
+		<#local section_path = doc.path>
+		<#local section_path = section_path?substring(rootPath?length, section_path?length)>
+		<#return get_path(doc.parent) + "> <a href='" + Context.baseURL + Context.modulePath + "/repository/" + index + section_path + "'>" + doc.title + "</a> ">
     <#else>
-	<#return "> <a href='" + Context.baseURL + Context.modulePath + "/repository'>" + doc.title + "</a> ">
+		<#return " <a href='" + Context.baseURL + Context.modulePath + "/repository/" + index + "/'>" + doc.title + "</a> ">
     </#if>
 </#function>
 
@@ -60,7 +59,7 @@
 		<#else>
 		    <#assign section_path = child.path>
 		    <#assign section_path = section_path?substring(Context.getProperty("sectionPath")?length, section_path?length)>
-		    <td><a href="${Context.baseURL}${Context.modulePath}/file/${section_path}">${filename}</a>
+		    <td><a href="${Context.baseURL}${Context.modulePath}/file/${index}/${section_path}">${filename}</a>
 			<#if file.length &gt;1024>(${(file.length / 1024)?int} Ko)</#if>
 			<#if file.length &lt;1024>(${file.length} B)</#if>
 		    </td>

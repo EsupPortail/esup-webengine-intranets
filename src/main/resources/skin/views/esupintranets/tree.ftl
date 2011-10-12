@@ -8,7 +8,7 @@
 	<table class="tree" cellspacing="0" cellpadding="3" border="0">
 	<tr>
 	    <td><img src="${Context.baseURL}/${contextPath}/icons/folder.gif"></td>
-	    <td><a href="${Context.baseURL}${Context.modulePath}/repository${section_path}">${node.title}</a></td>
+	    <td><a href="${Context.baseURL}${Context.modulePath}/repository/${index}${section_path}">${node.title}</a></td>
 	</tr>
 	<tr>
 	    <td></td>
