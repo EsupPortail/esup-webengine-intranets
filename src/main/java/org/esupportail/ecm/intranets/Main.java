@@ -97,8 +97,6 @@ public class Main extends ModuleRoot {
 		DocumentModel doc = null;
 		//DocumentModel versionDoc = null;
 		ctx.setProperty("sectionPath", sectionPath);
-		log.error("getFile");
-		log.error("path :: " + path);
 		//doc = session.getDocument(docRef);
 		//propertyFile = doc.getProperty("file:content");
 		DocumentModelList proxies = session.getProxies(docRef, null);

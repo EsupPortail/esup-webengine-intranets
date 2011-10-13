@@ -45,12 +45,12 @@
   <target name="copy" description="Copy files to Nuxeo">
     <delete>
       <!-- delete old versions of the project -->
-      <fileset file="${deploy.dir}/${name}-*.jar" />
+      <fileset file="${deploy.dir}/${name}*.jar" />
     </delete>
-  	<echo message="copy vers ${deploy.dir} de ${name}-*.jar"/>
+  	<echo message="copy vers ${deploy.dir} de ${name}.jar"/>
     <copy todir="${deploy.dir}" overwrite="true">
       <fileset dir="${build.dir}" casesensitive="yes">
-        <include name="${name}-*.jar" />
+        <include name="${name}.jar" />
         <exclude name="${name}-*-sources.jar" />
       </fileset>
     </copy>
