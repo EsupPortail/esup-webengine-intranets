@@ -1,18 +1,14 @@
 <@extends src="base.ftl">
   <@block name="title">Intranets</@block>
-  <@block name="header">
-    Beginning with Webengine !
-  </@block>
   <@block name="content">
-    This is the <i>index</i> of your module.
-    <div>
-      <a href="${This.path}/repository">Acc&egrave;der aux Intranets</a>
-    </div>
-
-  </@block>
-  <@block name="footer">
-    <div class="tip">
-      Your web root is <pre>${env.installDir}</pre>
-    </div>
+    Choisissez votre intranet :
+    <#assign paths = Context.getProperty("paths")>
+    <ul>
+    	<#assign index = 0>
+	    <#list paths as path>
+			<li><a href="${Context.baseURL}${Context.modulePath}/repository/${index}">${path}</a></li>
+			<#assign index = index + 1>    
+		</#list>
+	</ul>
   </@block>
 </@extends>

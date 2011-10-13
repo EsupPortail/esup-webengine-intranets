@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +188,13 @@ public class Main extends ModuleRoot {
 	 * Default view
 	 */
 	@GET
+	@Path("/")
 	public Object doGet() {
+		List<String> paths = new ArrayList<String>();
+		for (String section : sectionPaths) {
+			paths.add(section);
+		}
+		ctx.setProperty("paths", paths);
 		return getView("index");
 	}
 
