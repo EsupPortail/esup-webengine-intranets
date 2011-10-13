@@ -42,7 +42,7 @@ import org.nuxeo.runtime.api.Framework;
 public class Main extends ModuleRoot {
 
 	public static final Log log = LogFactory.getLog(Main.class);
-	protected String sectionPath;
+	protected String[] sectionPaths;
 
 	public Main() {
 		Map<Object, Object> intranetsProperties = new HashMap<Object, Object>();
