@@ -43,6 +43,9 @@ public class Main extends ModuleRoot {
 
 	public static final Log log = LogFactory.getLog(Main.class);
 	protected String[] sectionPaths;
+	protected String nuxeoUrl;
+	protected int newsSize;
+	protected String fileUserAction;
 
 	public Main() {
 		Map<Object, Object> intranetsProperties = new HashMap<Object, Object>();
@@ -66,6 +69,9 @@ public class Main extends ModuleRoot {
 		}
 		String sections = (String) intranetsProperties.get("section.path");
 		sectionPaths = sections.split(":");
+		nuxeoUrl = (String) intranetsProperties.get("default.url");
+		newsSize = Integer.parseInt((String) intranetsProperties.get("news.size"));
+		fileUserAction = (String) intranetsProperties.get("file.user-action");
 	}	
 
 	/**
@@ -76,6 +82,8 @@ public class Main extends ModuleRoot {
 		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
 		ctx.setProperty("index", index);
+		ctx.setProperty("nuxeoUrl", nuxeoUrl);
+		ctx.setProperty("fileUserAction", fileUserAction);
 		return new DocumentRoot(ctx, sectionPath);
 	}
 
@@ -193,7 +201,7 @@ public class Main extends ModuleRoot {
 			paths.add(section);
 		}
 		ctx.setProperty("paths", paths);
-		return getView("index");
+		return getView("index").arg("nuxeoUrl", nuxeoUrl).arg("fileUserAction", fileUserAction);
 	}
 
 	/**
@@ -215,7 +223,7 @@ public class Main extends ModuleRoot {
 		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
 		ctx.setProperty("index", index);
-		return getView("tree").arg("doc", new DocumentRoot(ctx, sectionPath));
+		return getView("tree").arg("doc", new DocumentRoot(ctx, sectionPath)).arg("fileUserAction", fileUserAction);
 	}
 
 	/**
@@ -228,6 +236,8 @@ public class Main extends ModuleRoot {
 		String sectionPath = sectionPaths[index];
 		ctx.setProperty("sectionPath", sectionPath);
 		ctx.setProperty("index", index);
+		ctx.setProperty("nuxeoUrl", nuxeoUrl);
+		ctx.setProperty("fileUserAction", fileUserAction);
 		String query = ctx.getRequest().getParameter("query");
 		if (query == null) {
 			String fullText = ctx.getRequest().getParameter("fullText");
@@ -247,7 +257,7 @@ public class Main extends ModuleRoot {
 		}
 		try {
 			DocumentModelList docs = ctx.getCoreSession().query(query);
-			return getView("search").arg("query", query).arg("result", docs);
+			return getView("search").arg("query", query).arg("result", docs).arg("nuxeoUrl", nuxeoUrl).arg("fileUserAction", fileUserAction);
 		} catch (ClientException e) {
 			throw WebException.wrap(e);
 		}
@@ -265,8 +275,8 @@ public class Main extends ModuleRoot {
 		String query = "SELECT * FROM Document WHERE (ecm:path STARTSWITH \"" + sectionPath + "\")"
 				+ " AND (ecm:primaryType = 'File') ORDER BY dc:modified DESC ";
 		try {
-			DocumentModelList docs = ctx.getCoreSession().query(query, 10);
-			return getView("news").arg("query", query).arg("result", docs);
+			DocumentModelList docs = ctx.getCoreSession().query(query, newsSize);
+			return getView("news").arg("query", query).arg("result", docs).arg("nuxeoUrl", nuxeoUrl).arg("fileUserAction", fileUserAction);
 		} catch (ClientException e) {
 			throw WebException.wrap(e);
 		}
@@ -284,7 +294,7 @@ public class Main extends ModuleRoot {
 		String query = "SELECT * FROM Document WHERE (ecm:path STARTSWITH \"" + sectionPath + "\")"
 				+ " AND (ecm:primaryType = 'File') ORDER BY dc:modified DESC ";
 		try {
-			DocumentModelList docs = ctx.getCoreSession().query(query, 10);
+			DocumentModelList docs = ctx.getCoreSession().query(query, newsSize);
 			return getView("rss").arg("query", query).arg("result", docs);
 		} catch (ClientException e) {
 			throw WebException.wrap(e);

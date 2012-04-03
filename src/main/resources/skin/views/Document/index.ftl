@@ -9,9 +9,9 @@
     <#if doc.path != rootPath>
 		<#local section_path = doc.path>
 		<#local section_path = section_path?substring(rootPath?length, section_path?length)>
-		<#return get_path(doc.parent) + "> <a href='" + Context.baseURL + Context.modulePath + "/repository/" + index + section_path + "'>" + doc.title + "</a> ">
+		<#return get_path(doc.parent) + "> <a href='" + Context.baseURL + Context.modulePath + "/repository/" + index + section_path + "'>" + doc.title + "</a>     " + doc.dublincore.description>
     <#else>
-		<#return " <a href='" + Context.baseURL + Context.modulePath + "/repository/" + index + "/'>" + doc.title + "</a> ">
+		<#return " <a href='" + Context.baseURL + Context.modulePath + "/repository/" + index + "/'>" + doc.title + "</a>     " + doc.dublincore.description>
     </#if>
 </#function>
 
@@ -36,16 +36,10 @@
 	    <th>Titre</th>
 	    <th>Derni&egrave;re modification</th>
 	    <th>Auteur</th>
+	     <th>Description</th>
 	</tr>
     </thead>
     <#list Document.children as child>
-	    <#if child.type = "Picture">
-	    	<#assign file = child["picture:views"][0]["content"]>
-	    	<#assign filename = child["picture:views"][0]["filename"]>
-	    <#else>
-		    <#assign file = child["file:content"]>
-		    <#assign filename = file.filename>
-	    </#if>
 	    <#if flag_row>
 		<#assign flag_row = false>
 	    <tr class="dataRowEven">
@@ -53,19 +47,28 @@
 		<#assign flag_row = true>
 	    <tr class="dataRowOdd">
 	    </#if>
-		<td class="iconColumn"><img src="${Context.baseURL}/${contextPath}${child["common:icon"]}"></td>
 		<#if child.isFolder>
+		    <td class="iconColumn"><img src="${Context.baseURL}/${contextPath}${child["common:icon"]}"></td>
 		    <td><a href="${Context.URL}/${child.name}">${child.title}</a></td>
 		<#else>
+		    <#if child.type = "Picture">
+		    	<#assign file = child["picture:views"][0]["content"]>
+		    	<#assign filename = child["picture:views"][0]["filename"]>
+			<#else>
+			    <#assign file = child["file:content"]>
+			    <#assign filename = file.filename>
+	   		</#if>
 		    <#assign section_path = child.path>
 		    <#assign section_path = section_path?substring(Context.getProperty("sectionPath")?length, section_path?length)>
-		    <td><a href="${Context.baseURL}${Context.modulePath}/file/${index}/${section_path}">${filename}</a>
+            <td class="iconColumn"><a href="${Context.getProperty("nuxeoUrl")}${Context.getProperty("sectionPath")}${section_path}${Context.getProperty("fileUserAction")}"><img src="${Context.baseURL}/${contextPath}${child["common:icon"]}"></a></td>
+		    <td><a href="${Context.baseURL}${Context.modulePath}/file/${index}/${section_path}">${child.title}</a>
 			<#if file.length &gt;1024>(${(file.length / 1024)?int} Ko)</#if>
 			<#if file.length &lt;1024>(${file.length} B)</#if>
 		    </td>
 		</#if>
 		<td>${get_date(child, child.dublincore.modified)}</td>
 		<td>${child.dublincore.creator}</td>
+		<td>${child.dublincore.description}</td>		
 	    </tr>
     </#list>
 </table>
